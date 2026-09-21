@@ -1,0 +1,56 @@
+# Java / Maven
+target/
+*.class
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+# macOS
+.DS_Store
+
+# Environment files
+.env
+.env.*
+!**/.env.example
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+
+# Logs
+*.log
+
+# Spring generated/help file
+HELP.md
+
+#.mvn/wrapper/maven-wrapper.jar
+#!**/src/main/**/target/
+#!**/src/test/**/target/
+
+### STS ###
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+#!**/src/main/**/build/
+#!**/src/test/**/build/
+
+### VS Code ###
+.vscode/

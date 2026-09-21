@@ -1,0 +1,67 @@
+# Docker Compose creates a network where the service names (e.g., java_db, redis, backend, etc.) act like hostnames (e.g., localhost).
+
+services:
+  java_app:
+    container_name: java_app
+    image: milenavilcinskaite/java_app:1.0.0
+    build: .
+    ports:
+        - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://java_db:5432/postgres
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+      KEYCLOAK_ISSUER_URI: http://localhost:8081/realms/room-booking
+      KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/room-booking/protocol/openid-connect/certs # OIDC configuration endpoint
+    depends_on:
+      java_db:
+        condition: service_healthy
+
+  java_db: # name of the docker compose service
+    container_name: java_db # name of the docker container
+    image: postgres:17
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Is a way to have persistency with containers
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:26.7.3
+    command:
+      - start-dev
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://localhost:8081
+    ports:
+      - "8081:8080"
+
+# Example template of additional docker services to add:
+#  redis:
+#    container_name: java_redis
+#    image: redis:7
+#    ports:
+#      - "6379:6379"
+#
+
+# The backend (java_app) service can refer to PostgreSQL by the service name java_db, for example: jdbc:postgresql://java_db:5432/postgres
+#  java_app:
+#    container_name: java_app
+#    build: .
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - java_db
+#      - redis
+
+volumes:
+  postgres_data: {}

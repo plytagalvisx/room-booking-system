@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.codewithmosh</groupId>
-    <artifactId>store</artifactId>
+    <artifactId>room-booking-system</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>store</name>
-    <description>store</description>
+    <name>room-booking-system</name>
+    <description>room-booking-system</description>
     <url/>
     <licenses>
         <license/>

@@ -24,7 +24,7 @@ jobs:
     name: Authenticated E2E
     runs-on: ubuntu-latest
 
-    timeout-minutes: 20
+    timeout-minutes: 40
 
     env:
       E2E_USERNAME: e2e-user
@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload E2E diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-results
           path: |

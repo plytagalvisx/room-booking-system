@@ -1,0 +1,40 @@
+{
+  "realm": "room-booking",
+  "enabled": true,
+  "registrationAllowed": false,
+
+  "roles": {
+    "realm": [
+      {
+        "name": "USER"
+      },
+      {
+        "name": "ADMIN"
+      }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "room-booking-frontend",
+      "name": "room-booking-frontend",
+      "enabled": true,
+      "protocol": "openid-connect",
+
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+
+      "rootUrl": "http://localhost:5173",
+      "baseUrl": "http://localhost:5173",
+
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+
+      "webOrigins": [
+        "http://localhost:5173"
+      ]
+    }
+  ]
+}

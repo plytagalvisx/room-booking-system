@@ -1,0 +1,15 @@
+target/
+.git/
+.github/
+
+.idea/
+*.iml
+
+frontend/
+node_modules/
+
+*.log
+.DS_Store
+
+.env
+.env.*

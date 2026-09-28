@@ -1,6 +1,9 @@
-import keycloak from "../auth/keycloak";
+// API Client: This is a wrapper around the fetch API that adds the Authorization header with the Keycloak access token.
 
-export const API_BASE_URL= import.meta.env.VITE_API_BASE_URL;
+import keycloak from "../auth/keycloak";
+import { env } from "../config/env";
+
+export const API_BASE_URL= env.apiBaseUrl; // import.meta.env.VITE_API_BASE_URL;
 
 // We want every authenticated API call to use one reusable request function:
 export async function authenticatedFetch(path: string, options: RequestInit = {}): Promise<Response> {

@@ -17,7 +17,7 @@ docker compose up -d java_db keycloak
 
 echo "Waiting for PostgreSQL..."
 
-until docker exec java_db \
+until docker compose exec -T java_db \
     pg_isready -U postgres -d postgres \
     >/dev/null 2>&1
 do
@@ -27,18 +27,37 @@ done
 echo "PostgreSQL is ready."
 
 # Create the E2E database if it does not already exist.
-if ! docker exec java_db \
+# Using "docker compose exec -T java_db" instead of "docker exec java_db" makes the script independent of generated container names.
+if ! docker compose exec -T java_db \
     psql -U postgres -tAc \
     "SELECT 1 FROM pg_database WHERE datname='store_e2e'" \
     | grep -q 1
 then
     echo "Creating store_e2e database..."
 
-    docker exec java_db \
+    docker compose exec -T java_db \
         createdb -U postgres store_e2e
 fi
 
 echo "Waiting for Keycloak..."
+
+until curl -fsS \
+    "http://localhost:8081/realms/master/.well-known/openid-configuration" \
+    >/dev/null
+do
+    sleep 1
+done
+
+echo "Keycloak is ready."
+
+
+# Insert a dedicated E2E Keycloak setup script: which uses Keycloak's official Admin CLI approach: authenticate, create realms/clients/users, set passwords, and assign roles.
+echo "Configuring Keycloak for E2E..."
+
+bash "$ROOT_DIR/scripts/setup-keycloak-e2e.sh"
+
+
+echo "Waiting for room-booking realm..."
 
 until curl -fsS \
     "http://localhost:8081/realms/room-booking/.well-known/openid-configuration" \
@@ -47,7 +66,8 @@ do
     sleep 1
 done
 
-echo "Keycloak is ready."
+echo "room-booking realm is ready."
+
 
 # Do not accidentally run E2E against some other backend.
 if lsof -nP -iTCP:8080 -sTCP:LISTEN \
@@ -103,3 +123,5 @@ echo "Running Playwright..."
 cd "$FRONTEND_DIR"
 
 npm run test:e2e
+
+# In this file we created an E2E runner script

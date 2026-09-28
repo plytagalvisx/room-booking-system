@@ -1,0 +1,77 @@
+# In this file, we created the E2E GitHub Actions workflow.
+
+#  e2e.yml
+#   → push to main
+#   → manual run
+#   → E2E_PASSWORD available
+#   → real Keycloak login
+
+name: E2E
+
+on:
+  push: # E2E is not run on every pull request (PR) because the GitHub repository secrets (e.g. E2E_PASSWORD) are unavailable to workflows from forks.
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+
+  e2e:
+    name: Authenticated E2E
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 20
+
+    env:
+      E2E_USERNAME: e2e-user
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Make scripts executable
+        run: |
+          chmod +x mvnw
+          chmod +x scripts/*.sh
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run authenticated E2E test
+        working-directory: frontend
+        run: npm run test:e2e:full # Here's where we run the E2E tests such as Playwright tests.
+
+      - name: Upload E2E diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+            target/e2e-backend.log
+          if-no-files-found: ignore

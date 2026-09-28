@@ -24,11 +24,17 @@ jobs:
     name: Authenticated E2E
     runs-on: ubuntu-latest
 
-    timeout-minutes: 40
+    timeout-minutes: 20
 
     env:
       E2E_USERNAME: e2e-user
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+
+      # These are not secrets, so they don't need GitHub Secrets:
+      VITE_API_BASE_URL: http://localhost:8080/api
+      VITE_KEYCLOAK_URL: http://localhost:8081
+      VITE_KEYCLOAK_REALM: room-booking
+      VITE_KEYCLOAK_CLIENT_ID: room-booking-frontend
 
     steps:
       - name: Checkout repository

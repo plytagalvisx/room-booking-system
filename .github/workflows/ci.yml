@@ -1,3 +1,13 @@
+# In this file we created the CI GitHub Actions workflow for our project.
+# It runs tests for both the backend and frontend whenever there is a push or pull request to the GitHub repository.
+
+#  ci.yml
+#   → push + pull_request
+#   → backend tests
+#   → Vitest
+#   → frontend build
+#   → no sensitive credentials
+
 name: CI
 
 on:
@@ -25,7 +35,7 @@ jobs:
         run: chmod +x mvnw
 
       - name: Run backend tests
-        run: ./mvnw test
+        run: ./mvnw test # Here's where we run the backend tests such as unit tests and integration tests.
 
 
   frontend:
@@ -51,7 +61,7 @@ jobs:
         run: npm ci
 
       - name: Run frontend tests
-        run: npm test -- --run
+        run: npm test -- --run # Here's where we run the frontend tests such as unit tests and integration tests.
 
       - name: Build frontend
         env:

@@ -25,6 +25,9 @@ RUN npm run build
 
 
 # ---------- Runtime stage ----------
+# OBS! Nginx is a reverse proxy and web server that can serve static content.
+# Usually, the role of a reverse proxy is to protect the backend server from direct access by clients,
+# and to provide additional features such as security, load balancing, caching, and SSL termination.
 FROM nginx:stable-alpine-slim
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf

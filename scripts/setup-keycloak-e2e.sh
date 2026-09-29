@@ -47,10 +47,15 @@ fi
 
 echo "Checking frontend client..."
 
-if ! kc get clients \
-    -r "$REALM" \
-    -q "clientId=$CLIENT_ID" \
-    | grep -q "$CLIENT_ID"
+CLIENT_ID_RESULT="$(
+    kc get clients \
+        -r "$REALM" \
+        -q "clientId=$CLIENT_ID" \
+        --fields id \
+        2>/dev/null || true
+)"
+
+if [[ "$CLIENT_ID_RESULT" == "[]" ]]
 then
     echo "Creating frontend client..."
 
@@ -63,14 +68,21 @@ then
         -s directAccessGrantsEnabled=false \
         -s 'redirectUris=["http://localhost:5173/*"]' \
         -s 'webOrigins=["http://localhost:5173"]'
+else
+    echo "Frontend client already exists."
 fi
 
 echo "Checking E2E user..."
 
-if ! kc get users \
-    -r "$REALM" \
-    -q "username=$E2E_USERNAME" \
-    | grep -q "$E2E_USERNAME"
+USER_RESULT="$(
+    kc get users \
+        -r "$REALM" \
+        -q "username=$E2E_USERNAME" \
+        --fields id \
+        2>/dev/null || true
+)"
+
+if [[ "$USER_RESULT" == "[]" ]]
 then
     echo "Creating E2E user..."
 
@@ -82,6 +94,8 @@ then
         -s "lastName=User" \
         -s emailVerified=true \
         -s enabled=true
+else
+    echo "E2E user already exists."
 fi
 
 echo "Setting E2E user password..."

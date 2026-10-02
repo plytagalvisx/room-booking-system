@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet # creates a stateful application, in this case a PostgreSQL database Pod
+# StatefulSet runs a group of Pods, and maintains a sticky identity for each of those Pods.
+# This is useful for managing applications (pods) that need persistent storage or a stable,
+# unique network identity.
+
+metadata:
+  name: postgres
+
+spec:
+  serviceName: postgres-headless
+
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: postgres
+
+  template:
+    metadata:
+      labels:
+        app: postgres
+
+    spec:
+      containers:
+        - name: postgres
+
+          image: postgres:17
+
+          ports:
+            - containerPort: 5432
+              name: postgres
+
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+
+      spec:
+        accessModes:
+          - ReadWriteOnce
+
+        resources:
+          requests:
+            storage: 2Gi

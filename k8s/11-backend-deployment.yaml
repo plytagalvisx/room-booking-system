@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: room-booking-backend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: room-booking-backend
+
+  template:
+    metadata:
+      labels:
+        app: room-booking-backend
+
+    spec:
+      containers:
+        - name: backend
+          image: room-booking-backend:0.1.3
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8080
+
+          envFrom:
+            - configMapRef:
+                name: backend-config
+
+          env:
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD

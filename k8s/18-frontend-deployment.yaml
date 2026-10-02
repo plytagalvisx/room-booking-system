@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: room-booking-frontend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: room-booking-frontend
+
+  template:
+    metadata:
+      labels:
+        app: room-booking-frontend
+
+    spec:
+      containers:
+        - name: frontend
+          image: room-booking-frontend:0.2.2
+          imagePullPolicy: IfNotPresent # This avoids Kubernetes trying to pull it from an external registry if it's already present locally.
+
+          ports:
+            - containerPort: 80

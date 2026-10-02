@@ -1,0 +1,25 @@
+apiVersion: v1 # The apiVersion field specifies the version of the Kubernetes API that is used to create the pod. In this case, the apiVersion is v1, which is the stable version of the Kubernetes API.
+kind: Pod # The kind field specifies the type of Kubernetes resource that is being created. In this case, the kind is Pod, which means that we are creating a pod resource (object) inside the Kubernetes cluster.
+
+# The metadata section contains information about the pod, such as its identity/name and labels. The name of the pod is specified in the metadata.name field. In this case, the pod is named "hello-nginx".
+metadata:
+  name: hello-nginx
+
+# The desired configuration of the pod is specified in the spec section. The spec section contains a list of containers that will run in the pod. Each container has a name, an image, and a list of ports that it will expose.
+spec:
+  containers:
+    - name: nginx # nginx is the first container in the pod. It will run the nginx image and expose port 80.
+      image: nginx:alpine
+      ports:
+        - containerPort: 80
+
+
+# These are the core fields that Kubernetes expects in a manifest file.
+# We then apply this manifest file to the Kubernetes cluster using the kubectl apply command.
+# This will create a pod named "hello-nginx" that runs the nginx container and exposes port 80.
+# The command: kubectl apply -f k8s/01-pod.yaml
+
+# kubectl apply -f creates the resource if it doesn't exist and can later update it from the same manifest.
+
+# To inspect it, we use the command:
+# kubectl get pods

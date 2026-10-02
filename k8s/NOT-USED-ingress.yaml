@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: room-booking
+
+spec:
+  tls:
+    - hosts:
+        - booking.test
+        - api.booking.test
+        - auth.booking.test
+      secretName: room-booking-tls
+
+  rules:
+    - host: booking.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+
+    - host: api.booking.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 8080
+
+    - host: auth.booking.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080

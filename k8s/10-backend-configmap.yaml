@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: backend-config
+
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  DATABASE_URL: "jdbc:postgresql://postgres:5432/room_booking"
+  KEYCLOAK_ISSUER_URI: "https://auth.booking.test:60289/realms/room-booking" # The issuer-uri is the unique identifier (a URL string) for the specific Identity Provider that created the token. In our case, it will look something like https://example.com. Every valid JWT contains a claim inside its payload called iss (Issuer). When Keycloak generates a token for a user, it stamps its own name into that claim. When our Spring Boot backend receives this token, it strictly compares the iss value inside the token against the issuer-uri we hardcoded in our configuration or obtained via auto-discovery configuration. If they do not match exactly, Spring rejects the token immediately. This prevents a malicious actor from standing up their own rogue Keycloak instance, signing a token, and trying to pass it off to our backend.
+  KEYCLOAK_JWK_SET_URI: "http://keycloak:8080/realms/room-booking/protocol/openid-connect/certs" # The jwk-set-uri is just a web address (a URL) pointing to Keycloak's key management endpoint. When our SpringBoot backend receives a token, it doesn't just read the hardcoded URL string—it attempts to send a real network request to that URL to download the public keys required to verify the token's digital signature.
+
+#  JWT issuer identity
+#  http://localhost:8081/realms/room-booking
+#            ↑
+#        browser URL
+#
+#  Spring fetching signing keys
+#  http://keycloak:8080/...
+#             ↑
+#    Kubernetes internal Service
+
+# This is exactly the same public-vs-internal networking idea we learned with Docker Compose.
